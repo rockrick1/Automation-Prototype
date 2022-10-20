@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -18,7 +17,7 @@ namespace Utils
             }
         }
 
-        public T TryResolve<T>() where T : Dependable
+        public T Resolve<T>() where T : Dependable
         {
             T output = (T) _dependables.Find(dependable => dependable is T);
 

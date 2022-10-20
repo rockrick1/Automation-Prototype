@@ -4,13 +4,15 @@ namespace Utils
 {
     public abstract class Dependable : MonoBehaviour
     {
-        void Start()
+        protected virtual void Start()
         {
+            Debug.Log($"Dependable registration: {ToString()}");
             DependencyResolver.Instance.Register(this);
         }
 
-        void OnDestroy()
+        protected virtual void OnDestroy()
         {
+            Debug.Log($"Dependable destruction: {ToString()}");
             DependencyResolver.Instance.Unregister(this);
         }
     }

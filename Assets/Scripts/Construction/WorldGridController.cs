@@ -6,6 +6,9 @@ namespace Assets.Scripts.Construction
     public class WorldGridController : Dependable
     {
         [SerializeField] Grid _grid;
+        [SerializeField] Transform _placedItemsParent;
+
+        public Transform PlacedItemsParent => _placedItemsParent;
 
         public Vector2Int GetGridIndexTo(Vector2 pos)
         {
@@ -15,7 +18,11 @@ namespace Assets.Scripts.Construction
 
         public Vector2 GetClosestGridPointTo(Vector2 pos)
         {
-            var ret = new Vector2(((int) pos.x) / ((int) _grid.cellSize.x), ((int) pos.y) / ((int) _grid.cellSize.y));
+            var ret = new Vector2
+            (
+                (((int) pos.x) / ((int) _grid.cellSize.x)) + _grid.cellSize.x / 2,
+                (((int) pos.y) / ((int) _grid.cellSize.y)) + _grid.cellSize.y / 2
+            );
 
             ret.x -= pos.x < 0 ? 1 : 0;
             ret.y -= pos.y < 0 ? 1 : 0;

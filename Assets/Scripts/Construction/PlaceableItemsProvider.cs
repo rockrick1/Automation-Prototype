@@ -5,9 +5,10 @@ using UnityEngine;
 
 namespace Assets.Scripts.Construction
 {
-    public class PlaceableItemsProvider : MonoBehaviour
+    public class PlaceableItemsProvider
     {
         const string ITEM_PREFABS_PATH = "Assets/Prefabs/Items/PlaceableItems";
+
         Dictionary<string, BasePlaceableItemController> _items;
 
         public PlaceableItemsProvider()

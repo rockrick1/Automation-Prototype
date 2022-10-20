@@ -12,5 +12,7 @@ namespace Items
         [SerializeField] Sprite _sprite;
 
         public string Name => _name;
+        public Vector2Int Size => _size;
+        public Sprite Sprite => _sprite;
     }
 }
