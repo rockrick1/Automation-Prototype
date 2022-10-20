@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a2e8dd4ea36f3634980b921d6d0c2053, type: 3}
-  m_Name: BeltMk1
+  m_Name: BeltMk2
   m_EditorClassIdentifier: 
-  _name: 
-  _sprite: {fileID: 21300000, guid: 559fe54afff37f24aac46b23c7e39ee2, type: 3}
+  _name: BeltMk2
+  _sprite: {fileID: 556842373, guid: f77ee73ae44ccc541bc255f986f2d4f3, type: 3}
   _maxStack: 99
   _placeable: 1
   _size: {x: 1, y: 1}

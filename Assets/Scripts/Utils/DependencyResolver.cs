@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -7,7 +8,7 @@ namespace Utils
     {
         public static DependencyResolver Instance;
 
-        List<object> _dependables = new List<object>();
+        Dictionary<Type, object> _dependables = new Dictionary<Type, object>();
 
         void Awake()
         {
@@ -19,26 +20,31 @@ namespace Utils
 
         public T Resolve<T>() where T : Dependable
         {
-            T output = (T) _dependables.Find(dependable => dependable is T);
-
-            if (output == null)
-            {
-                Debug.LogError($"[{nameof(DependencyResolver)}] - Could not resolve dependency of type {nameof(T)}");
-                return null;
-            }
-
-            return output;
+            return (T) _dependables[typeof(T)];
         }
 
+        public bool TryResolve<T>(out T output) where T : Dependable
+        {
+            if (_dependables.TryGetValue(typeof(T), out object dependable))
+            {
+                output = dependable as T;
+                return true;
+            }
+
+            output = null;
+            return false;
+        }
 
         public void Register<T>(T dependable) where T : Dependable
         {
-            _dependables.Add(dependable);
+            Debug.Log($"Dependency resolver registration: {dependable.GetType()}");
+            _dependables[dependable.GetType()] = dependable as T;
         }
 
-        internal void Unregister(Dependable dependable)
+        internal void Unregister<T>(T dependable) where T : Dependable
         {
-            _dependables.Remove(dependable);
+            Debug.Log($"Dependency resolver removal: {dependable.GetType()}");
+            _dependables.Remove(dependable.GetType());
         }
     }
 }

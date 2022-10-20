@@ -1,22 +1,19 @@
-﻿using Assets.Scripts.Player;
-using Items;
+﻿using Items;
 using UnityEngine;
-using UnityEngine.UI;
-using Utils;
 
 namespace Assets.Scripts.Construction
 {
-    public class ItemPeviewController : MonoBehaviour
+    public class ItemPeviewController : BasePlaceableItemController
     {
-        [SerializeField] Image _itemImage;
         [SerializeField] float _opacity = .5f;
 
         public void Show(ItemData itemData)
         {
-            _itemImage.rectTransform.sizeDelta = itemData.Size;
-            _itemImage.sprite = itemData.Sprite;
-            _itemImage.color = new Color(1, 1, 1, _opacity);
+            _itemData = itemData;
+            _spriteRenderer.sprite = itemData.Sprite;
+            _spriteRenderer.color = new Color(1, 1, 1, _opacity);
             gameObject.SetActive(true);
+            base.Init(Orientation);
         }
 
         public void Hide()
@@ -27,10 +24,6 @@ namespace Assets.Scripts.Construction
         public void MoveTo(Vector2 pos)
         {
             transform.position = pos;
-        }
-
-        void Update()
-        {
         }
     }
 }

@@ -13,7 +13,7 @@ PrefabInstance:
       objectReference: {fileID: 11400000, guid: 42b13bce952f9174588ce546f955a626, type: 2}
     - target: {fileID: 2141675221410301713, guid: d7ca58d344af1864b87fc5714321da28, type: 3}
       propertyPath: m_Name
-      value: BeltMk1
+      value: BeltMk2
       objectReference: {fileID: 0}
     - target: {fileID: 6323210665220787002, guid: d7ca58d344af1864b87fc5714321da28, type: 3}
       propertyPath: m_RootOrder
@@ -60,8 +60,67 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9188195440364557756, guid: d7ca58d344af1864b87fc5714321da28, type: 3}
+      propertyPath: m_Size.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9188195440364557756, guid: d7ca58d344af1864b87fc5714321da28, type: 3}
+      propertyPath: m_Size.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9188195440364557756, guid: d7ca58d344af1864b87fc5714321da28, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 21300000, guid: 559fe54afff37f24aac46b23c7e39ee2, type: 3}
-    m_RemovedComponents: []
+      objectReference: {fileID: 556842373, guid: f77ee73ae44ccc541bc255f986f2d4f3, type: 3}
+    - target: {fileID: 9188195440364557756, guid: d7ca58d344af1864b87fc5714321da28, type: 3}
+      propertyPath: m_WasSpriteAssigned
+      value: 1
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: -2608312743373958524, guid: d7ca58d344af1864b87fc5714321da28, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: d7ca58d344af1864b87fc5714321da28, type: 3}
+--- !u!212 &3563845557797884668 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 9188195440364557756, guid: d7ca58d344af1864b87fc5714321da28, type: 3}
+  m_PrefabInstance: {fileID: 5689829417240397632}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &6002902415534473297 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2141675221410301713, guid: d7ca58d344af1864b87fc5714321da28, type: 3}
+  m_PrefabInstance: {fileID: 5689829417240397632}
+  m_PrefabAsset: {fileID: 0}
+--- !u!95 &5918981870889586308
+Animator:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6002902415534473297}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 5d80a81659ec3154f9f8739adceafc50, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &2667615047819085998
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6002902415534473297}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 450fd8ff6a857af4b9dac0111dfc3a4b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _itemData: {fileID: 11400000, guid: 42b13bce952f9174588ce546f955a626, type: 2}
+  _spriteRenderer: {fileID: 3563845557797884668}
+  Orientation: 0
+  _spriteAnimator: {fileID: 5918981870889586308}

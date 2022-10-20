@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using Items;
+using System.Collections.Generic;
+using UnityEngine;
 using Utils;
 
 namespace Assets.Scripts.Construction
@@ -8,7 +10,10 @@ namespace Assets.Scripts.Construction
         [SerializeField] Grid _grid;
         [SerializeField] Transform _placedItemsParent;
 
+        Dictionary<Vector2Int, BasePlaceableItemController> _placedItemsMatrix;
+
         public Transform PlacedItemsParent => _placedItemsParent;
+        public Dictionary<Vector2Int, BasePlaceableItemController> PlacedItemsMatrix;
 
         public Vector2Int GetGridIndexTo(Vector2 pos)
         {

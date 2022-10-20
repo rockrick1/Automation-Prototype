@@ -42,6 +42,8 @@ namespace Assets.Scripts.Construction
             BasePlaceableItemController controller = Instantiate(placeableItem);
             controller.gameObject.transform.position = _intendedPlacingPosition;
             controller.gameObject.transform.SetParent(grid.PlacedItemsParent);
+
+            controller.Init(_selectedItemPreview.Orientation);
         }
 
         public void EnterConstructionMode(ItemData itemData)
@@ -81,6 +83,11 @@ namespace Assets.Scripts.Construction
             {
                 if (!CanPlaceItemAt(_selectedItemData, _intendedPlacingPosition)) return;
                 PlaceItemAt(_selectedItemData, _intendedPlacingPosition);
+            }
+
+            if (Input.GetKeyDown(KeyCode.R) && _currentState == State.Construction)
+            {
+                _selectedItemPreview.RotateCw();
             }
         }
     }
