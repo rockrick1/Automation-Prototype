@@ -1,6 +1,5 @@
 ﻿using Assets.Scripts.Player;
 using Items;
-using System;
 using UnityEngine;
 using Utils;
 

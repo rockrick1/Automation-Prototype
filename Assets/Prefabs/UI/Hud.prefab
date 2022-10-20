@@ -177,6 +177,7 @@ MonoBehaviour:
   _toolbarItems:
   - {fileID: 11400000, guid: 7e45f70170a2ecf40b13d87d04fab025, type: 2}
   - {fileID: 11400000, guid: 42b13bce952f9174588ce546f955a626, type: 2}
+  - {fileID: 11400000, guid: 0d2f3d0c05a16e547adb6db63dc22b0b, type: 2}
 --- !u!1 &7896573165104004743
 GameObject:
   m_ObjectHideFlags: 0

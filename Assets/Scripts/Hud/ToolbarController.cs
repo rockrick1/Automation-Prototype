@@ -13,13 +13,11 @@ namespace Hud
         //TODO this should be handled separately later
         [SerializeField] List<ItemData> _toolbarItems;
 
-        ConstructionController _constructionController;
-
         void Start()
         {
             for (int i = 0; i < _slots.Count; i++)
             {
-                if (i >= _toolbarItems.Count)
+                if (i >= _toolbarItems.Count || _toolbarItems[i] == null)
                 {
                     _slots[i].Init(null, null);
                     continue;
@@ -35,8 +33,7 @@ namespace Hud
 
         void OnSlotClicked(ItemData itemData)
         {
-            _constructionController = DependencyResolver.Instance.Resolve<ConstructionController>();
-            _constructionController.EnterConstructionMode(itemData);
+            DependencyResolver.Instance.Resolve<ConstructionController>().EnterConstructionMode(itemData);
         }
     }
 }

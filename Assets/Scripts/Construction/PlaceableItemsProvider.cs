@@ -29,6 +29,10 @@ namespace Assets.Scripts.Construction
                     prefabsPaths.Add(assetPath);
                     BasePlaceableItemController asset = AssetDatabase.LoadAssetAtPath(assetPath, 
                         typeof(BasePlaceableItemController)) as BasePlaceableItemController;
+                    if (string.IsNullOrEmpty(asset.ItemData.Name))
+                    {
+                        Debug.LogError($"Trying to register ItemData with empty name! {asset.ItemData.ToString()}");
+                    }
                     _items.Add(asset.ItemData.Name, asset);
                 }
             }

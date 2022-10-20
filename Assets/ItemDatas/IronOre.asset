@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a2e8dd4ea36f3634980b921d6d0c2053, type: 3}
-  m_Name: BeltMk1
+  m_Name: IronOre
   m_EditorClassIdentifier: 
   _name: 
-  _sprite: {fileID: 21300000, guid: 559fe54afff37f24aac46b23c7e39ee2, type: 3}
+  _sprite: {fileID: 0}
   _maxStack: 99
-  _placeable: 1
+  _placeable: 0
   _size: {x: 1, y: 1}
