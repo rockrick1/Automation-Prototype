@@ -175,6 +175,37 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!1 &331907766
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 331907767}
+  m_Layer: 0
+  m_Name: ResourceNodes
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &331907767
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 331907766}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2009325039}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &471369872
 GameObject:
   m_ObjectHideFlags: 0
@@ -3302,6 +3333,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _tilemap: {fileID: 1811212607}
   _beltSpritesAnimationSynchronizer: {fileID: 240328010}
+  _itemInTransportPrefab: {fileID: 4256329772212383862, guid: 5b58a4b90aebadc4d954fb0ab5a1a96d, type: 3}
 --- !u!1 &2009325036
 GameObject:
   m_ObjectHideFlags: 0
@@ -3334,6 +3366,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _grid: {fileID: 2009325038}
   _placedItemsParent: {fileID: 1089619096}
+  _resourceNodesParent: {fileID: 331907767}
+  _coalNodeTest: {fileID: 8203211960160312479, guid: 9e9b1915a366777459ac3fbc40face86, type: 3}
 --- !u!156049354 &2009325038
 Grid:
   m_ObjectHideFlags: 0
@@ -3361,6 +3395,7 @@ Transform:
   - {fileID: 647881166}
   - {fileID: 1811212605}
   - {fileID: 1089619096}
+  - {fileID: 331907767}
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -3522,11 +3557,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7519849260097264988, guid: c304f61bd4c7a6d45b63c1cdfd9df4fb, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7519849260097264988, guid: c304f61bd4c7a6d45b63c1cdfd9df4fb, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7519849260097264988, guid: c304f61bd4c7a6d45b63c1cdfd9df4fb, type: 3}
       propertyPath: m_LocalPosition.z

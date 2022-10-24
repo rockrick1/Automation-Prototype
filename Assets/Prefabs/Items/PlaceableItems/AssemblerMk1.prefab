@@ -15,6 +15,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: AssemblerMk1
       objectReference: {fileID: 0}
+    - target: {fileID: 4463725980127249083, guid: d7ca58d344af1864b87fc5714321da28, type: 3}
+      propertyPath: _itemData
+      value: 
+      objectReference: {fileID: 11400000, guid: 7e45f70170a2ecf40b13d87d04fab025, type: 2}
     - target: {fileID: 6323210665220787002, guid: d7ca58d344af1864b87fc5714321da28, type: 3}
       propertyPath: m_RootOrder
       value: 0
@@ -63,5 +67,9 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 21300000, guid: 2c9839c2b51c38341bf8297807ea7a3b, type: 3}
+    - target: {fileID: 9188195440364557756, guid: d7ca58d344af1864b87fc5714321da28, type: 3}
+      propertyPath: m_WasSpriteAssigned
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d7ca58d344af1864b87fc5714321da28, type: 3}

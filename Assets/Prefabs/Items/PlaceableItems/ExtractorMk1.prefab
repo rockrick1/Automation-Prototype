@@ -15,6 +15,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: ExtractorMk1
       objectReference: {fileID: 0}
+    - target: {fileID: 4463725980127249083, guid: d7ca58d344af1864b87fc5714321da28, type: 3}
+      propertyPath: _itemData
+      value: 
+      objectReference: {fileID: 11400000, guid: 0d2f3d0c05a16e547adb6db63dc22b0b, type: 2}
     - target: {fileID: 6323210665220787002, guid: d7ca58d344af1864b87fc5714321da28, type: 3}
       propertyPath: m_RootOrder
       value: 0
@@ -63,5 +67,36 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 21300000, guid: 57a4bd2b3f04e834da2200860a1b7d1a, type: 3}
-    m_RemovedComponents: []
+    - target: {fileID: 9188195440364557756, guid: d7ca58d344af1864b87fc5714321da28, type: 3}
+      propertyPath: m_WasSpriteAssigned
+      value: 1
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: -2608312743373958524, guid: d7ca58d344af1864b87fc5714321da28, type: 3}
+    - {fileID: 4463725980127249083, guid: d7ca58d344af1864b87fc5714321da28, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: d7ca58d344af1864b87fc5714321da28, type: 3}
+--- !u!212 &3563845557797884668 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 9188195440364557756, guid: d7ca58d344af1864b87fc5714321da28, type: 3}
+  m_PrefabInstance: {fileID: 5689829417240397632}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &6002902415534473297 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2141675221410301713, guid: d7ca58d344af1864b87fc5714321da28, type: 3}
+  m_PrefabInstance: {fileID: 5689829417240397632}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &7159345852328792664
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6002902415534473297}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4c79cc5c8d2c9c44a14e527d28afab7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _itemData: {fileID: 11400000, guid: 0d2f3d0c05a16e547adb6db63dc22b0b, type: 2}
+  _spriteRenderer: {fileID: 3563845557797884668}
+  _orientation: 3

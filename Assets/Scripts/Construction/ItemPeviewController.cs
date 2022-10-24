@@ -1,9 +1,10 @@
-﻿using Items;
+﻿using Buildings;
+using Items;
 using UnityEngine;
 
 namespace Assets.Scripts.Construction
 {
-    public class ItemPeviewController : BasePlaceableItemController
+    public class ItemPeviewController : PlaceableItemController
     {
         [SerializeField] float _opacity = .5f;
 

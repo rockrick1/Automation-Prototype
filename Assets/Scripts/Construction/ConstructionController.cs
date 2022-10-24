@@ -1,5 +1,8 @@
 ﻿using Assets.Scripts.Player;
+using Buildings;
+using Buildings.Belts;
 using Items;
+using System;
 using UnityEngine;
 using Utils;
 
@@ -13,12 +16,13 @@ namespace Assets.Scripts.Construction
             Construction,
             Destruction
         }
+        static int i = 0;
 
         [SerializeField] ItemPeviewController _selectedItemPreview;
 
         PlaceableItemsProvider _placeableItemsProvider;
         ItemData _selectedItemData;
-        Vector2 _intendedPlacingPosition;
+        Vector3 _intendedPlacingPosition;
         State _currentState;
 
         protected override void Start()
@@ -38,12 +42,27 @@ namespace Assets.Scripts.Construction
         {
             WorldGridController grid = DependencyResolver.Instance.Resolve<WorldGridController>();
 
-            var placeableItem = _placeableItemsProvider.GetPlaceableItem(itemData);
-            BasePlaceableItemController controller = Instantiate(placeableItem);
+            var placeableItem = _placeableItemsProvider.GetPlaceableItem(itemData) as PlaceableItemController;
+            PlaceableItemController controller = Instantiate(placeableItem);
             controller.gameObject.transform.position = _intendedPlacingPosition;
             controller.gameObject.transform.SetParent(grid.PlacedItemsParent);
 
+            grid.RegisterPlacedItem(_intendedPlacingPosition, controller);
+            ProcessAdjacentItems(controller);
+            if (controller is BeltController) controller.name = $"belt {i++}";
+
             controller.Init(_selectedItemPreview.Orientation);
+        }
+
+        void ProcessAdjacentItems(PlaceableItemController placed)
+        {
+            foreach(var keyItem in placed.GetSurroundingItems())
+            {
+                keyItem.Value.OnItemPlacedAdjacent(placed, placed.transform.position);
+
+                if (!keyItem.Value.TryGetItemAtOrientation(out PlaceableItemController item) || item != placed) continue;
+                keyItem.Value.OnItemPlacedAtOrientation(placed);
+            }
         }
 
         public void EnterConstructionMode(ItemData itemData)
@@ -59,8 +78,8 @@ namespace Assets.Scripts.Construction
             WorldGridController grid = DependencyResolver.Instance.Resolve<WorldGridController>();
 
             Camera cam = DependencyResolver.Instance.Resolve<PlayerController>().PlayerCamera;
-            Vector2 pos = grid.GetClosestGridPointTo(cam.ScreenToWorldPoint(Input.mousePosition));
-            _selectedItemPreview.transform.position = new Vector3(pos.x, pos.y, 10);
+            Vector3 pos = grid.GetClosestGridPointTo(cam.ScreenToWorldPoint(Input.mousePosition));
+            _selectedItemPreview.transform.position = pos;
             _intendedPlacingPosition = pos;
         }
 

@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: IronOre
   m_EditorClassIdentifier: 
   _name: IronOre
+  _type: 4
   _sprite: {fileID: 0}
   _maxStack: 99
   _placeable: 0

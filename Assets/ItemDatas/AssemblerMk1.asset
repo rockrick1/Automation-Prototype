@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: AssemblerMk1
   m_EditorClassIdentifier: 
   _name: AssemblerMk1
+  _type: 3
   _sprite: {fileID: 21300000, guid: 2c9839c2b51c38341bf8297807ea7a3b, type: 3}
   _maxStack: 99
   _placeable: 1

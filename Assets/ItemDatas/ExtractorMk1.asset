@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: ExtractorMk1
   m_EditorClassIdentifier: 
   _name: ExtractorMk1
+  _type: 2
   _sprite: {fileID: 21300000, guid: 57a4bd2b3f04e834da2200860a1b7d1a, type: 3}
   _maxStack: 99
   _placeable: 1
