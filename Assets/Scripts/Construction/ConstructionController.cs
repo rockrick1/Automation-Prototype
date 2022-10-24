@@ -20,7 +20,7 @@ namespace Assets.Scripts.Construction
             Construction,
             Destruction
         }
-        static int i = 0;
+        //static int i = 0;
 
         [SerializeField] ItemPeviewController _selectedItemPreview;
         [SerializeField] MultiButton _constructionButton;
@@ -50,30 +50,30 @@ namespace Assets.Scripts.Construction
         {
             WorldGridController grid = DependencyResolver.Instance.Resolve<WorldGridController>();
 
-            var placeableItem = _placeableItemsProvider.GetPlaceableItem(itemData) as PlaceableItemController;
+            var placeableItem = _placeableItemsProvider.GetPlaceableItem(itemData);
             PlaceableItemController controller = Instantiate(placeableItem);
             controller.gameObject.transform.position = _intendedPlacingPosition;
             controller.gameObject.transform.SetParent(grid.PlacedItemsParent);
 
             grid.RegisterPlacedItem(_intendedPlacingPosition, controller);
-            ProcessAdjacentItems(controller);
-            if (controller is BeltController) controller.name = $"belt {i++}";
-
+            //if (controller is BeltController) controller.name = $"belt {i++}";
             controller.Init(_selectedItemPreview.Orientation);
+            ProcessPlacementForAdjacentItems(controller);
         }
 
         public void DestroyItemAt(Vector2 pos)
         {
             WorldGridController grid = DependencyResolver.Instance.Resolve<WorldGridController>();
 
-            if (!grid.TryGetItemOn(pos, out PlaceableItemController item)) return;
+            if (!grid.TryGetItemOn(pos, out PlaceableItemController controller)) return;
 
-            item.OnDestroyed();
+            controller.OnDestroyed();
+            ProcessDestructionForAdjacentItems(controller);
             grid.DestroyItemAt(pos);
-            Destroy(item.gameObject);
+            Destroy(controller.gameObject);
         }
 
-        void ProcessAdjacentItems(PlaceableItemController placed)
+        void ProcessPlacementForAdjacentItems(PlaceableItemController placed)
         {
             foreach(var keyItem in placed.GetSurroundingItems())
             {
@@ -81,6 +81,17 @@ namespace Assets.Scripts.Construction
 
                 if (!keyItem.Value.TryGetItemAtOrientation(out PlaceableItemController item) || item != placed) continue;
                 keyItem.Value.OnItemPlacedAtOrientation(placed);
+            }
+        }
+
+        void ProcessDestructionForAdjacentItems(PlaceableItemController destroyed)
+        {
+            foreach (var keyItem in destroyed.GetSurroundingItems())
+            {
+                keyItem.Value.OnItemRemovedAdjacent(destroyed, destroyed.transform.position);
+
+                if (!keyItem.Value.TryGetItemAtOrientation(out PlaceableItemController item) || item != destroyed) continue;
+                keyItem.Value.OnItemRemovedAtOrientation(destroyed);
             }
         }
 

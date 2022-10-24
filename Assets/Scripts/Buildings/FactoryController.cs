@@ -46,10 +46,6 @@ namespace Buildings
         {
             foreach(BeltTransportEvent e in _beltTransportEvents.ToList())
             {
-                _beltsWithEvents.Add(e.Source);
-            }
-            foreach(BeltTransportEvent e in _beltTransportEvents.ToList())
-            {
                 if (_beltsWithEvents.Contains(e.Target) || !e.Target.IsFree()) continue;
                 
                 e.Source.ExecuteTransport();
@@ -61,6 +57,25 @@ namespace Buildings
         public void RegisterEvent(BeltTransportEvent beltTransportEvent)
         {
             _beltTransportEvents.Add(beltTransportEvent);
+            _beltsWithEvents.Add(beltTransportEvent.Source);
+        }
+
+        public void RemoveEventsBySource(IItemReceiver receiver)
+        {
+            _beltTransportEvents.RemoveWhere(e => e.Source == receiver as BeltController);
+            if (receiver is BeltController belt)
+            {
+                _beltsWithEvents.Remove(belt);
+            }
+        }
+
+        public void RemoveEventsByTarget(IItemReceiver receiver)
+        {
+            _beltTransportEvents.RemoveWhere(e => e.Target == receiver);
+            if (receiver is BeltController belt)
+            {
+                _beltsWithEvents.Remove(belt);
+            }
         }
     }
 }

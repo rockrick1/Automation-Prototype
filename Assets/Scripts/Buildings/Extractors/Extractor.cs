@@ -46,20 +46,22 @@ namespace Buildings.Extractors
         {
             while (true)
             {
-                if (_hasResourceNode && _target != null && _target is IItemReceiver receiver && receiver.IsFree())
+                yield return new WaitForSeconds(_extractionInterval);
+
+                while (_target == null || _target is not IItemReceiver receiver || !receiver.IsFree())
                 {
-                    switch (_target.ItemData.Type)
-                    {
-                        case ItemType.Assembler:
-                            FeedResourceToAssembler(_target as AssemblerController, _resourceNode.YieldingItem);
-                            break;
-                        case ItemType.Belt:
-                            FeedResourceToBelt(_target as BeltController, _resourceNode.YieldingItem);
-                            break;
-                    }
+                    yield return null;
                 }
 
-                yield return new WaitForSeconds(_extractionInterval);
+                switch (_target.ItemData.Type)
+                {
+                    case ItemType.Assembler:
+                        FeedResourceToAssembler(_target as AssemblerController, _resourceNode.YieldingItem);
+                        break;
+                    case ItemType.Belt:
+                        FeedResourceToBelt(_target as BeltController, _resourceNode.YieldingItem);
+                        break;
+                }
             }
         }
 

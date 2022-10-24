@@ -60,6 +60,22 @@ namespace Buildings.Belts
             }
         }
 
+        public override void OnItemRemovedAtOrientation(PlaceableItemController other)
+        {
+            DependencyResolver.Instance.Resolve<FactoryController>().RemoveEventsBySource(this);
+        }
+
+        public override void OnDestroyed()
+        {
+            DependencyResolver.Instance.Resolve<FactoryController>().RemoveEventsByTarget(this);
+
+            if (_heldItem == null) return;
+
+            if (_transportRoutine!= null) StopCoroutine(_transportRoutine);
+
+            Destroy(_heldItem.gameObject);
+        }
+
         void TryRegisterEvent()
         {
             if (_heldItem == null || _target == null) return;
@@ -88,7 +104,7 @@ namespace Buildings.Belts
 
             var item = _heldItem;
             float timeElapsed = 0;
-            float duration = .5f;
+            float duration = .1f;
 
             receiver.ReserveReception(_heldItem);
             _heldItem = null;
@@ -109,13 +125,6 @@ namespace Buildings.Belts
         public bool IsFree()
         {
             return _heldItem == null;
-        }
-
-        public override void OnDestroyed()
-        {
-            if (_heldItem == null) return;
-
-            Destroy(_heldItem.gameObject);
         }
     }
 }
