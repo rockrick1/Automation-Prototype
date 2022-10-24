@@ -33,6 +33,7 @@ namespace Buildings
             var itemInTransport = Instantiate(_itemInTransportPrefab);
             itemInTransport.Init(item);
             itemInTransport.transform.position = belt.transform.position;
+            belt.ReserveReception(itemInTransport);
             belt.ReceiveItem(itemInTransport);
         }
 

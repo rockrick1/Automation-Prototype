@@ -6,5 +6,6 @@ namespace Buildings
     {
         public bool IsFree();
         public void ReceiveItem(ItemInTransportController item);
+        public void ReserveReception(ItemInTransportController item);
     }
 }

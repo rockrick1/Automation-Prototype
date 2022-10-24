@@ -1,4 +1,5 @@
 ﻿using Items;
+using System.Collections;
 using UnityEngine;
 using Utils;
 
@@ -13,6 +14,7 @@ namespace Buildings.Belts
         // the object to which the belt will try to move its item
         PlaceableItemController _target;
         Animator _animSync;
+        Coroutine _transportRoutine;
 
         public override void Init(ItemOrientation oritentation)
         {
@@ -24,12 +26,24 @@ namespace Buildings.Belts
             _target = other;
         }
 
-        public void ReceiveItem(ItemInTransportController item)
+        void Update()
+        {
+            _spriteAnimator.Play(0, -1, _animSync.GetCurrentAnimatorStateInfo(0).normalizedTime);
+        }
+
+        public void ReserveAndRegisterEvent(ItemInTransportController item)
         {
             _heldItem = item;
-            //move item
-            item.transform.position = transform.position;
+            TryRegisterEvent();
+        }
 
+        public void ReserveReception(ItemInTransportController item)
+        {
+            _heldItem = item;
+        }
+
+        public void ReceiveItem(ItemInTransportController item)
+        {
             TryRegisterEvent();
         }
 
@@ -46,11 +60,6 @@ namespace Buildings.Belts
             }
         }
 
-        void Update()
-        {
-            _spriteAnimator.Play(0, -1, _animSync.GetCurrentAnimatorStateInfo(0).normalizedTime);
-        }
-
         void TryRegisterEvent()
         {
             if (_heldItem == null || _target == null) return;
@@ -65,16 +74,48 @@ namespace Buildings.Belts
 
         public void ExecuteTransport()
         {
-            if (_target != null && _target is IItemReceiver receiver)
+            if (_transportRoutine != null) return;
+            _transportRoutine = StartCoroutine(TransportRoutine());
+        }
+
+        IEnumerator TransportRoutine()
+        {
+            if (_target == null || _target is not IItemReceiver receiver)
             {
-                receiver.ReceiveItem(_heldItem);
-                _heldItem = null;
+                _transportRoutine = null;
+                yield break;
             }
+
+            var item = _heldItem;
+            float timeElapsed = 0;
+            float duration = .5f;
+
+            receiver.ReserveReception(_heldItem);
+            _heldItem = null;
+
+            while (timeElapsed < duration)
+            {
+                item.transform.position = Vector3.Lerp(transform.position, _target.transform.position, timeElapsed / duration);
+                timeElapsed += Time.deltaTime;
+                yield return null;
+            }
+
+            item.transform.position = _target.transform.position;
+            receiver.ReceiveItem(item);
+
+            _transportRoutine = null;
         }
 
         public bool IsFree()
         {
             return _heldItem == null;
+        }
+
+        public override void OnDestroyed()
+        {
+            if (_heldItem == null) return;
+
+            Destroy(_heldItem.gameObject);
         }
     }
 }

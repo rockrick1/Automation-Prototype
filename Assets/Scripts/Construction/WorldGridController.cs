@@ -68,6 +68,11 @@ namespace Assets.Scripts.Construction
             PlacedItemsMatrix[(Vector2Int) GetGridIndexTo(pos)] = item;
         }
 
+        public void DestroyItemAt(Vector3 pos)
+        {
+            PlacedItemsMatrix.Remove((Vector2Int)GetGridIndexTo(pos));
+        }
+
         public bool TryGetItemOn(Vector3 pos, out PlaceableItemController output)
         {
             return PlacedItemsMatrix.TryGetValue((Vector2Int) GetGridIndexTo(pos), out output);

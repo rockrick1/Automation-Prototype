@@ -135,6 +135,7 @@ namespace Buildings
             }
         }
 
+        public virtual void OnDestroyed() { }
         public virtual void OnItemPlacedAdjacent(PlaceableItemController other, Vector3 pos) { }
         public virtual void OnItemPlacedAtOrientation(PlaceableItemController other) { }
         public virtual void OnItemRemovedAdjacent(PlaceableItemController other, Vector3 pos) { }

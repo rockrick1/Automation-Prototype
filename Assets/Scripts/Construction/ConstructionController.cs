@@ -3,7 +3,11 @@ using Buildings;
 using Buildings.Belts;
 using Items;
 using System;
+using UI;
 using UnityEngine;
+using UnityEngine.Events;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
 using Utils;
 
 namespace Assets.Scripts.Construction
@@ -19,6 +23,7 @@ namespace Assets.Scripts.Construction
         static int i = 0;
 
         [SerializeField] ItemPeviewController _selectedItemPreview;
+        [SerializeField] MultiButton _constructionButton;
 
         PlaceableItemsProvider _placeableItemsProvider;
         ItemData _selectedItemData;
@@ -31,11 +36,14 @@ namespace Assets.Scripts.Construction
             _placeableItemsProvider = new PlaceableItemsProvider();
             _currentState = State.Standby;
             _selectedItemPreview.Hide();
+            _constructionButton.LeftClick.AddListener(OnConstructClicked);
+            _constructionButton.RightClick.AddListener(OnDestructClicked);
         }
 
         public bool CanPlaceItemAt(ItemData itemData, Vector2 pos)
         {
-            return true;
+            WorldGridController grid = DependencyResolver.Instance.Resolve<WorldGridController>();
+            return !grid.TryGetItemOn(pos, out PlaceableItemController _);
         }
 
         public void PlaceItemAt(ItemData itemData, Vector2 pos)
@@ -52,6 +60,17 @@ namespace Assets.Scripts.Construction
             if (controller is BeltController) controller.name = $"belt {i++}";
 
             controller.Init(_selectedItemPreview.Orientation);
+        }
+
+        public void DestroyItemAt(Vector2 pos)
+        {
+            WorldGridController grid = DependencyResolver.Instance.Resolve<WorldGridController>();
+
+            if (!grid.TryGetItemOn(pos, out PlaceableItemController item)) return;
+
+            item.OnDestroyed();
+            grid.DestroyItemAt(pos);
+            Destroy(item.gameObject);
         }
 
         void ProcessAdjacentItems(PlaceableItemController placed)
@@ -83,6 +102,24 @@ namespace Assets.Scripts.Construction
             _intendedPlacingPosition = pos;
         }
 
+        void OnConstructClicked()
+        {
+            if (_currentState != State.Construction) return;
+
+            if (!CanPlaceItemAt(_selectedItemData, _intendedPlacingPosition)) return;
+            PlaceItemAt(_selectedItemData, _intendedPlacingPosition);
+        }
+
+        void OnDestructClicked()
+        {
+            if (_currentState != State.Construction) return;
+
+            WorldGridController grid = DependencyResolver.Instance.Resolve<WorldGridController>();
+            Camera cam = DependencyResolver.Instance.Resolve<PlayerController>().PlayerCamera;
+
+            DestroyItemAt(grid.GetClosestGridPointTo(cam.ScreenToWorldPoint(Input.mousePosition)));
+        }
+
         void Update()
         {
             if (_selectedItemPreview.gameObject.activeInHierarchy)
@@ -98,15 +135,10 @@ namespace Assets.Scripts.Construction
                 _selectedItemData = null;
             }
 
-            if (Input.GetMouseButtonDown(0) && _currentState == State.Construction)
-            {
-                if (!CanPlaceItemAt(_selectedItemData, _intendedPlacingPosition)) return;
-                PlaceItemAt(_selectedItemData, _intendedPlacingPosition);
-            }
-
             if (Input.GetKeyDown(KeyCode.R) && _currentState == State.Construction)
             {
-                _selectedItemPreview.RotateCw();
+                if (Input.GetKeyDown(KeyCode.LeftShift)) _selectedItemPreview.RotateCcw();
+                else _selectedItemPreview.RotateCw();
             }
         }
     }

@@ -11,15 +11,23 @@ namespace Buildings.Extractors
 {
     public class Extractor : PlaceableItemController
     {
+        [SerializeField] float _extractionInterval = 1f;
+
         ResourceNodeController _resourceNode;
         PlaceableItemController _target;
         bool _hasResourceNode;
 
         public override void Init(ItemOrientation oritentation)
         {
+            base.Init(oritentation);
+
             _hasResourceNode = DependencyResolver.Instance.Resolve<WorldGridController>().
                 TryGetNodeOn(transform.position, out _resourceNode);
-            base.Init(oritentation);
+            if (!_hasResourceNode) return;
+
+            var grid = DependencyResolver.Instance.Resolve<FactoryController>();
+            TryGetItemAtOrientation(out _target);
+
             StartCoroutine(ItemGenerationRoutine());
         }
 
@@ -51,7 +59,7 @@ namespace Buildings.Extractors
                     }
                 }
 
-                yield return new WaitForSeconds(1f);
+                yield return new WaitForSeconds(_extractionInterval);
             }
         }
 

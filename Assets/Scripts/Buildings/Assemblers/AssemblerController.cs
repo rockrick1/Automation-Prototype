@@ -12,5 +12,9 @@ namespace Buildings.Assemblers
         public void ReceiveItem(ItemInTransportController item)
         {
         }
+
+        public void ReserveReception(ItemInTransportController item)
+        {
+        }
     }
 }
