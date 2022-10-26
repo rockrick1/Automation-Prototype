@@ -8,6 +8,7 @@ namespace Buildings.Belts
     public class BeltController : PlaceableItemController, IItemReceiver
     {
         [SerializeField] Animator _spriteAnimator;
+        [SerializeField] float _transportSpeed = .5f;
 
         FactoryController _gridController;
         ItemInTransportController _heldItem;
@@ -37,9 +38,10 @@ namespace Buildings.Belts
             TryRegisterEvent();
         }
 
-        public void ReserveReception(ItemInTransportController item)
+        public void ReserveAndExecuteReception(ItemInTransportController item)
         {
             _heldItem = item;
+            _transportRoutine = StartCoroutine(TransportRoutine());
         }
 
         public void ReceiveItem(ItemInTransportController item)
@@ -55,7 +57,7 @@ namespace Buildings.Belts
                 case ItemType.Assembler:
                 case ItemType.Belt:
                     _target = other;
-                    TryRegisterEvent();
+                    if (_transportRoutine == null) TryRegisterEvent();
                     break;
             }
         }
@@ -92,42 +94,26 @@ namespace Buildings.Belts
         {
             if (_target == null || _target is not IItemReceiver receiver) return;
 
-            receiver.ReserveReception(_heldItem);
-
-            //_target.ExecuteReception();
-            if (_transportRoutine != null) return;
-
-            _transportRoutine = StartCoroutine(TransportRoutine());
+            receiver.ReserveAndExecuteReception(_heldItem);
+            _heldItem = null;
         }
-
-        public void ExecuteReception() { }
 
         IEnumerator TransportRoutine()
         {
-            if (_target == null || _target is not IItemReceiver receiver)
-            {
-                _transportRoutine = null;
-                yield break;
-            }
-
-            var item = _heldItem;
-            Vector3 destination = _target.transform.position;
+            Vector3 origin = _heldItem.transform.position;
+            Vector3 destination = transform.position;
             float timeElapsed = 0;
-            float duration = .5f;
 
-            receiver.ReserveReception(_heldItem);
-            _heldItem = null;
-
-            while (timeElapsed < duration)
+            while (timeElapsed < _transportSpeed)
             {
-                item.transform.position = Vector3.Lerp(transform.position, destination, timeElapsed / duration);
+                if (_heldItem == null) yield break;
+                _heldItem.transform.position = Vector3.Lerp(origin, destination, timeElapsed / _transportSpeed);
                 timeElapsed += Time.deltaTime;
                 yield return null;
             }
 
-            item.transform.position = destination;
-            receiver.ReceiveItem(item);
-
+            _heldItem.transform.position = destination;
+            TryRegisterEvent();
             _transportRoutine = null;
         }
 

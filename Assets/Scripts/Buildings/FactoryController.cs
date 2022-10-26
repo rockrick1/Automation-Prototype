@@ -41,18 +41,6 @@ namespace Buildings
             throw new NotImplementedException();
         }
 
-        void Update()
-        {
-            foreach(BeltTransportEvent e in _beltTransportEvents.ToList())
-            {
-                if (_beltsWithEvents.Contains(e.Target) || !e.Target.IsFree()) continue;
-                
-                e.Source.ExecuteTransport();
-                _beltTransportEvents.Remove(e);
-                _beltsWithEvents.Remove(e.Source);
-            }
-        }
-
         public void RegisterEvent(BeltTransportEvent beltTransportEvent)
         {
             _beltTransportEvents.Add(beltTransportEvent);
@@ -83,8 +71,25 @@ namespace Buildings
 
             foreach(var e in _beltTransportEvents)
             {
-                if (e.Target is not PlaceableItemController other) continue;
+                if (e.Target == null || e.Source == null || e.Target is not PlaceableItemController other) continue;
                 DrawArrow(e.Source.transform.position, other.transform.position - e.Source.transform.position, .5f);
+            }
+        }
+
+        void Update()
+        {
+            foreach (BeltTransportEvent e in _beltTransportEvents.ToList())
+            {
+                if (e.Source == null || e.Target == null)
+                {
+                    _beltTransportEvents.Remove(e);
+                }
+
+                if (_beltsWithEvents.Contains(e.Target) || !e.Target.IsFree()) continue;
+
+                e.Source.ExecuteTransport();
+                _beltTransportEvents.Remove(e);
+                _beltsWithEvents.Remove(e.Source);
             }
         }
 
