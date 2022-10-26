@@ -1,13 +1,8 @@
 ﻿using Assets.Scripts.Player;
 using Buildings;
-using Buildings.Belts;
 using Items;
-using System;
 using UI;
 using UnityEngine;
-using UnityEngine.Events;
-using UnityEngine.EventSystems;
-using UnityEngine.UI;
 using Utils;
 
 namespace Assets.Scripts.Construction

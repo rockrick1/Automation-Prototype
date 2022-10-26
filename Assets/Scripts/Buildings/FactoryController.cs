@@ -33,8 +33,7 @@ namespace Buildings
             var itemInTransport = Instantiate(_itemInTransportPrefab);
             itemInTransport.Init(item);
             itemInTransport.transform.position = belt.transform.position;
-            belt.ReserveReception(itemInTransport);
-            belt.ReceiveItem(itemInTransport);
+            belt.ReserveAndRegisterEvent(itemInTransport);
         }
 
         public void FeedItemToAssembler(AssemblerController assembler, ItemData item)
@@ -76,6 +75,27 @@ namespace Buildings
             {
                 _beltsWithEvents.Remove(belt);
             }
+        }
+
+        void OnDrawGizmos()
+        {
+            if (_beltTransportEvents == null) return;
+
+            foreach(var e in _beltTransportEvents)
+            {
+                if (e.Target is not PlaceableItemController other) continue;
+                DrawArrow(e.Source.transform.position, other.transform.position - e.Source.transform.position, .5f);
+            }
+        }
+
+        public static void DrawArrow(Vector3 pos, Vector3 direction, float arrowHeadLength = 0.25f, float arrowHeadAngle = 45f)
+        {
+            Gizmos.DrawRay(pos, direction);
+
+            Vector3 right = Quaternion.LookRotation(direction) * Quaternion.Euler(0, 180 + arrowHeadAngle, 0) * new Vector3(0, 0, 1);
+            Vector3 left = Quaternion.LookRotation(direction) * Quaternion.Euler(0, 180 - arrowHeadAngle, 0) * new Vector3(0, 0, 1);
+            Gizmos.DrawRay(pos + direction, right * arrowHeadLength);
+            Gizmos.DrawRay(pos + direction, left * arrowHeadLength);
         }
     }
 }

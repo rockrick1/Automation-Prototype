@@ -90,9 +90,17 @@ namespace Buildings.Belts
 
         public void ExecuteTransport()
         {
+            if (_target == null || _target is not IItemReceiver receiver) return;
+
+            receiver.ReserveReception(_heldItem);
+
+            //_target.ExecuteReception();
             if (_transportRoutine != null) return;
+
             _transportRoutine = StartCoroutine(TransportRoutine());
         }
+
+        public void ExecuteReception() { }
 
         IEnumerator TransportRoutine()
         {
@@ -103,20 +111,21 @@ namespace Buildings.Belts
             }
 
             var item = _heldItem;
+            Vector3 destination = _target.transform.position;
             float timeElapsed = 0;
-            float duration = .1f;
+            float duration = .5f;
 
             receiver.ReserveReception(_heldItem);
             _heldItem = null;
 
             while (timeElapsed < duration)
             {
-                item.transform.position = Vector3.Lerp(transform.position, _target.transform.position, timeElapsed / duration);
+                item.transform.position = Vector3.Lerp(transform.position, destination, timeElapsed / duration);
                 timeElapsed += Time.deltaTime;
                 yield return null;
             }
 
-            item.transform.position = _target.transform.position;
+            item.transform.position = destination;
             receiver.ReceiveItem(item);
 
             _transportRoutine = null;

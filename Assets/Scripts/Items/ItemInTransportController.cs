@@ -11,8 +11,6 @@ namespace Items
             _spriteRenderer.sprite = Sprite.Create(itemData.Sprite.texture,
                 new Rect(0, 0, itemData.Sprite.texture.width, itemData.Sprite.texture.height),
                 new Vector2(0.5f, .5f), 32);
-
-            //_spriteRenderer.sprite = itemData.Sprite;
         }
     }
 }
