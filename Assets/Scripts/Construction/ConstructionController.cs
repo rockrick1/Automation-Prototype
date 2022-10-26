@@ -1,5 +1,6 @@
 ﻿using Assets.Scripts.Player;
 using Buildings;
+using Buildings.Belts;
 using Items;
 using UI;
 using UnityEngine;
@@ -15,7 +16,7 @@ namespace Assets.Scripts.Construction
             Construction,
             Destruction
         }
-        //static int i = 0;
+        static int i = 0;
 
         [SerializeField] ItemPeviewController _selectedItemPreview;
         [SerializeField] MultiButton _constructionButton;
@@ -49,6 +50,8 @@ namespace Assets.Scripts.Construction
             PlaceableItemController controller = Instantiate(placeableItem);
             controller.gameObject.transform.position = _intendedPlacingPosition;
             controller.gameObject.transform.SetParent(grid.PlacedItemsParent);
+
+            if (controller is BeltController belt) belt.name = $"belt{i++}";
 
             grid.RegisterPlacedItem(_intendedPlacingPosition, controller);
             controller.Init(_selectedItemPreview.Orientation);

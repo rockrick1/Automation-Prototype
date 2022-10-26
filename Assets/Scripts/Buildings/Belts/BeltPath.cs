@@ -111,5 +111,16 @@ namespace Buildings.Belts
                 Debug.LogError(errorString);
             }
         }
+
+        public override string ToString()
+        {
+            string ret = "";
+            foreach(var belt in Belts)
+            {
+                ret += $"({belt.GetIndexOnGrid().x}, {belt.GetIndexOnGrid().y})->";
+            }
+
+            return ret;
+        }
     }
 }

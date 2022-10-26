@@ -4,6 +4,7 @@ using Items;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Tilemaps;
@@ -21,12 +22,14 @@ namespace Buildings
 
         List<BeltController> _belts;
         List<BeltPath> _beltPaths;
+        Dictionary<BeltController, BeltPath> _beltsToPath;
 
         protected override void Start()
         {
             base.Start();
             _belts = new List<BeltController>();
             _beltPaths = new List<BeltPath>();
+            _beltsToPath = new Dictionary<BeltController, BeltPath>();
         }
 
         public void FeedItemToBelt(BeltController belt, ItemData item)
@@ -64,11 +67,25 @@ namespace Buildings
 
         void RefreshPathsList(BeltController placed)
         {
-            _beltPaths.Clear();
+            List<BeltController> belts = new List<BeltController>();
+            belts.Add(placed);
 
-            List<BeltController> belts = new List<BeltController>(_belts);
+            string debug = "b4";
+            foreach (var path in _beltPaths)
+            {
+                debug += $"{path}\n";
+            }
+            Debug.Log(debug);
 
-            while(belts.Count > 0)
+            foreach (var neighbour in placed.GetSurroundingItems().Values)
+            {
+                if (neighbour is not BeltController neighbourBelt) continue;
+
+                belts.AddRange(_beltsToPath[neighbourBelt].Belts);
+                _beltPaths.Remove(_beltsToPath[neighbourBelt]);
+            }
+
+            while (belts.Count > 0)
             {
                 BeltController belt = belts[0];
                 belts.RemoveAt(0);
@@ -85,6 +102,7 @@ namespace Buildings
                         if (hasPrevious && path.ContainsBelt(previous as BeltController)) continue;
 
                         path.AddBelt(belt);
+                        _beltsToPath[belt] = path;
                         foundPath = true;
                         break;
                     }
@@ -94,20 +112,28 @@ namespace Buildings
                 {
                     BeltPath path = new BeltPath();
                     path.AddBelt(belt);
+                    _beltsToPath[belt] = path;
                     _beltPaths.Add(path);
                 }
-            }
-            {
+
                 int iterations = 0;
                 while(TryMergeBeltPaths())
                 {
-                    if (++iterations > 1000) 
+                    if (++iterations > 1000)
                     {
                         Debug.LogError("BREAK!!!!");
                         break;
                     }
                 }
             }
+
+
+            debug = "after";
+            foreach (var path in _beltPaths)
+            {
+                debug += $"{path}\n";
+            }
+            Debug.Log(debug);
         }
 
         bool TryMergeBeltPaths()
@@ -133,6 +159,10 @@ namespace Buildings
                     {
                         pathA.MergePathWith(pathB);
                         _beltPaths.Remove(pathB);
+                        foreach(var belt in pathB.Belts)
+                        {
+                            _beltsToPath[belt] = pathA;
+                        }
                         return true;
                     }
                 }
