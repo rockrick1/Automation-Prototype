@@ -9,7 +9,7 @@ namespace Buildings.Belts
     {
         [SerializeField] Animator _spriteAnimator;
 
-        FactoryController _gridController;
+        FactoryController _factoryController;
         ItemInTransportController _heldItem;
         // the object to which the belt will try to move its item
         PlaceableItemController _target;
@@ -19,8 +19,10 @@ namespace Buildings.Belts
         public override void Init(ItemOrientation oritentation)
         {
             base.Init(oritentation);
-            _gridController = DependencyResolver.Instance.Resolve<FactoryController>();
-            _animSync = _gridController.AnimSync;
+            _factoryController = DependencyResolver.Instance.Resolve<FactoryController>();
+            _animSync = _factoryController.AnimSync;
+
+            _factoryController.OnBeltCreated(this);
 
             if (!TryGetItemAtOrientation(out PlaceableItemController other)) return;
             _target = other;
@@ -62,12 +64,11 @@ namespace Buildings.Belts
 
         public override void OnItemRemovedAtOrientation(PlaceableItemController other)
         {
-            DependencyResolver.Instance.Resolve<FactoryController>().RemoveEventsBySource(this);
         }
 
         public override void OnDestroyed()
         {
-            DependencyResolver.Instance.Resolve<FactoryController>().RemoveEventsByTarget(this);
+            _factoryController.OnBeltDestroyed(this);
 
             if (_heldItem == null) return;
 
@@ -80,12 +81,12 @@ namespace Buildings.Belts
         {
             if (_heldItem == null || _target == null) return;
 
-            var beltTransportEvent = new BeltTransportEvent
-            {
-                Source = this,
-                Target = _target as IItemReceiver
-            };
-            _gridController.RegisterEvent(beltTransportEvent);
+            //var beltTransportEvent = new BeltTransportEvent
+            //{
+            //    Source = this,
+            //    Target = _target as IItemReceiver
+            //};
+            //_factoryController.RegisterEvent(beltTransportEvent);
         }
 
         public void ExecuteTransport()

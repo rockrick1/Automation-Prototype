@@ -51,7 +51,6 @@ namespace Assets.Scripts.Construction
             controller.gameObject.transform.SetParent(grid.PlacedItemsParent);
 
             grid.RegisterPlacedItem(_intendedPlacingPosition, controller);
-            //if (controller is BeltController) controller.name = $"belt {i++}";
             controller.Init(_selectedItemPreview.Orientation);
             ProcessPlacementForAdjacentItems(controller);
         }

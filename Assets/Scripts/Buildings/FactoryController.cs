@@ -3,7 +3,8 @@ using Buildings.Belts;
 using Items;
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.IO;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using Utils;
@@ -18,14 +19,14 @@ namespace Buildings
 
         public Animator AnimSync => _beltSpritesAnimationSynchronizer;
 
-        HashSet<BeltTransportEvent> _beltTransportEvents;
-        HashSet<BeltController> _beltsWithEvents;
+        List<BeltController> _belts;
+        List<BeltPath> _beltPaths;
 
         protected override void Start()
         {
             base.Start();
-            _beltTransportEvents = new HashSet<BeltTransportEvent>();
-            _beltsWithEvents = new HashSet<BeltController>();
+            _belts = new List<BeltController>();
+            _beltPaths = new List<BeltPath>();
         }
 
         public void FeedItemToBelt(BeltController belt, ItemData item)
@@ -43,59 +44,115 @@ namespace Buildings
 
         void Update()
         {
-            foreach(BeltTransportEvent e in _beltTransportEvents.ToList())
+            foreach(var path in _beltPaths)
             {
-                if (_beltsWithEvents.Contains(e.Target) || !e.Target.IsFree()) continue;
-                
-                e.Source.ExecuteTransport();
-                _beltTransportEvents.Remove(e);
-                _beltsWithEvents.Remove(e.Source);
+                //path.ExecuteTransport();
             }
         }
 
-        public void RegisterEvent(BeltTransportEvent beltTransportEvent)
+        public void OnBeltCreated(BeltController belt)
         {
-            _beltTransportEvents.Add(beltTransportEvent);
-            _beltsWithEvents.Add(beltTransportEvent.Source);
+            _belts.Add(belt);
+            RefreshPathsList(belt);
         }
 
-        public void RemoveEventsBySource(IItemReceiver receiver)
+        public void OnBeltDestroyed(BeltController belt)
         {
-            _beltTransportEvents.RemoveWhere(e => e.Source == receiver as BeltController);
-            if (receiver is BeltController belt)
+            _belts.Remove(belt);
+            RefreshPathsList(belt);
+        }
+
+        void RefreshPathsList(BeltController placed)
+        {
+            _beltPaths.Clear();
+
+            List<BeltController> belts = new List<BeltController>(_belts);
+
+            while(belts.Count > 0)
             {
-                _beltsWithEvents.Remove(belt);
+                BeltController belt = belts[0];
+                belts.RemoveAt(0);
+
+                bool foundPath = false;
+                if (belt.TryGetItemAtOrientation(out PlaceableItemController next) && next is BeltController)
+                {
+                    bool hasPrevious = belt.TryGetItemAtOppositeOrientation(out PlaceableItemController previous) &&
+                            previous is BeltController;
+
+                    foreach(BeltPath path in _beltPaths)
+                    {
+                        if (!path.ContainsBelt(belt)) continue;
+                        if (hasPrevious && path.ContainsBelt(previous as BeltController)) continue;
+
+                        path.AddBelt(belt);
+                        foundPath = true;
+                        break;
+                    }
+                }
+
+                if (!foundPath)
+                {
+                    BeltPath path = new BeltPath();
+                    path.AddBelt(belt);
+                    _beltPaths.Add(path);
+                }
+            }
+            {
+                int iterations = 0;
+                while(TryMergeBeltPaths())
+                {
+                    if (++iterations > 1000) 
+                    {
+                        Debug.LogError("BREAK!!!!");
+                        break;
+                    }
+                }
             }
         }
 
-        public void RemoveEventsByTarget(IItemReceiver receiver)
+        bool TryMergeBeltPaths()
         {
-            _beltTransportEvents.RemoveWhere(e => e.Target == receiver);
-            if (receiver is BeltController belt)
+            for(int i = 0; i < _beltPaths.Count; i++)
             {
-                _beltsWithEvents.Remove(belt);
+                BeltPath pathA = _beltPaths[i];
+                for(int j = 0; j < _beltPaths.Count; j++)
+                {
+                    if (i == j) continue;
+                    BeltPath pathB = _beltPaths[j];
+
+                    BeltController firstA = pathA.GetFristBelt();
+                    BeltController lastA = pathA.GetLastBelt();
+                    BeltController firstB = pathB.GetFristBelt();
+                    BeltController lastB = pathB.GetLastBelt();
+
+                    lastA.TryGetItemAtOrientation(out PlaceableItemController nextLastA);
+                    lastB.TryGetItemAtOrientation(out PlaceableItemController nextLastB);
+
+                    // A will connect with B
+                    if (nextLastA == firstB && nextLastB != firstA)
+                    {
+                        pathA.MergePathWith(pathB);
+                        _beltPaths.Remove(pathB);
+                        return true;
+                    }
+                }
             }
+
+            return false;
         }
 
         void OnDrawGizmos()
         {
-            if (_beltTransportEvents == null) return;
+            if (_beltPaths == null) return;
 
-            foreach(var e in _beltTransportEvents)
+            foreach(var path in _beltPaths)
             {
-                if (e.Target is not PlaceableItemController other) continue;
-                DrawArrow(e.Source.transform.position, other.transform.position - e.Source.transform.position, .5f);
+                int i = 0;
+                foreach(var belt in path.Belts)
+                {
+                    Handles.Label(belt.transform.position, $"{i++}");
+                }
             }
-        }
-
-        public static void DrawArrow(Vector3 pos, Vector3 direction, float arrowHeadLength = 0.25f, float arrowHeadAngle = 45f)
-        {
-            Gizmos.DrawRay(pos, direction);
-
-            Vector3 right = Quaternion.LookRotation(direction) * Quaternion.Euler(0, 180 + arrowHeadAngle, 0) * new Vector3(0, 0, 1);
-            Vector3 left = Quaternion.LookRotation(direction) * Quaternion.Euler(0, 180 - arrowHeadAngle, 0) * new Vector3(0, 0, 1);
-            Gizmos.DrawRay(pos + direction, right * arrowHeadLength);
-            Gizmos.DrawRay(pos + direction, left * arrowHeadLength);
         }
     }
 }
