@@ -29,10 +29,17 @@ namespace Buildings
         public void FeedItemToReceiver(IItemTransporter receiver, ItemData item)
         {
             if (receiver is not PlaceableItemController placeable) return;
-            var itemInTransport = Instantiate(_itemInTransportPrefab);
-            itemInTransport.Init(item);
-            itemInTransport.transform.position = placeable.transform.position;
-            receiver.ReserveAndInstantReceive(itemInTransport);
+            if (receiver is BeltController)
+            {
+                var itemInTransport = Instantiate(_itemInTransportPrefab);
+                itemInTransport.Init(item);
+                itemInTransport.transform.position = placeable.transform.position;
+                receiver.ReserveAndInstantReceive(item, itemInTransport);
+            }
+            else
+            {
+                receiver.ReserveAndInstantReceive(item);
+            }
         }
 
         public void RegisterEvent(ItemTransportEvent beltTransportEvent)
@@ -69,7 +76,11 @@ namespace Buildings
                     continue;
                 }
 
-                if ((e.Target is IItemTransporter target && _itemsWithEvents.Contains(target)) || !e.Target.IsFree()) continue;
+                if ((e.Target is IItemTransporter target && _itemsWithEvents.Contains(target)) ||
+                    !e.Target.IsFree(e.ItemData))
+                {
+                    continue;
+                }
 
                 e.Source.ExecuteTransport();
                 _beltTransportEvents.Remove(e);

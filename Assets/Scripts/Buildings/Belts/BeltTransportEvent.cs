@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+﻿using Items;
 
 namespace Buildings.Belts
 {
@@ -6,5 +6,6 @@ namespace Buildings.Belts
     {
         public IItemTransporter Source;
         public IItemTransporter Target;
+        public ItemData ItemData;
     }
 }

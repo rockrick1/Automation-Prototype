@@ -52,7 +52,7 @@ namespace Buildings.Extractors
             {
                 yield return new WaitForSeconds(_extractionInterval);
 
-                while (_target == null || !_target.IsFree()) yield return null;
+                while (_target == null || !_target.IsFree(null)) yield return null;
 
                 DependencyResolver.Instance.Resolve<FactoryController>().
                     FeedItemToReceiver(_target, _resourceNode.YieldingItem);

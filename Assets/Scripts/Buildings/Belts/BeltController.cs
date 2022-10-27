@@ -40,9 +40,9 @@ namespace Buildings.Belts
             _transportRoutine = StartCoroutine(TransportRoutine());
         }
 
-        public void ReserveAndInstantReceive(ItemInTransportController item)
+        public void ReserveAndInstantReceive(ItemData itemData, ItemInTransportController itemInTransport = null)
         {
-            _heldItem = item;
+            _heldItem = itemInTransport;
             TryRegisterEvent();
         }
 
@@ -89,7 +89,8 @@ namespace Buildings.Belts
             var beltTransportEvent = new ItemTransportEvent
             {
                 Source = this,
-                Target = _target
+                Target = _target,
+                ItemData = _heldItem.ItemData
             };
             _factoryController.RegisterEvent(beltTransportEvent);
         }
@@ -123,7 +124,7 @@ namespace Buildings.Belts
             _transportRoutine = null;
         }
 
-        public bool IsFree()
+        public bool IsFree(ItemData item)
         {
             return _heldItem == null;
         }

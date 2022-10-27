@@ -60,12 +60,12 @@ namespace Buildings.Inserters
             }
         }
 
-        public bool IsFree()
+        public bool IsFree(ItemData item)
         {
             return true;
         }
 
-        public void ReserveAndInstantReceive(ItemInTransportController item)
+        public void ReserveAndInstantReceive(ItemData itemData, ItemInTransportController item = null)
         {
             throw new System.NotImplementedException();
         }
@@ -73,9 +73,6 @@ namespace Buildings.Inserters
         public void ReserveAndExecuteReception(ItemInTransportController item)
         {
             throw new System.NotImplementedException();
-            //_heldItem = item.ItemData;
-            //Destroy(item);
-            //OnReceptionFinished(null);
         }
 
         public void OnReceptionFinished(ItemInTransportController item)
@@ -90,7 +87,8 @@ namespace Buildings.Inserters
             var beltTransportEvent = new ItemTransportEvent
             {
                 Source = this,
-                Target = _target
+                Target = _target,
+                ItemData = _heldItem
             };
             _factoryController.RegisterEvent(beltTransportEvent);
         }
