@@ -1,7 +1,5 @@
-using Buildings.Assemblers;
 using Buildings.Belts;
 using Items;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -18,50 +16,64 @@ namespace Buildings
 
         public Animator AnimSync => _beltSpritesAnimationSynchronizer;
 
-        HashSet<BeltTransportEvent> _beltTransportEvents;
-        HashSet<BeltController> _beltsWithEvents;
+        HashSet<ItemTransportEvent> _beltTransportEvents;
+        HashSet<IItemTransporter> _itemsWithEvents;
 
         protected override void Start()
         {
             base.Start();
-            _beltTransportEvents = new HashSet<BeltTransportEvent>();
-            _beltsWithEvents = new HashSet<BeltController>();
+            _beltTransportEvents = new HashSet<ItemTransportEvent>();
+            _itemsWithEvents = new HashSet<IItemTransporter>();
         }
 
-        public void FeedItemToBelt(BeltController belt, ItemData item)
+        public void FeedItemToReceiver(IItemTransporter receiver, ItemData item)
         {
+            if (receiver is not PlaceableItemController placeable) return;
             var itemInTransport = Instantiate(_itemInTransportPrefab);
             itemInTransport.Init(item);
-            itemInTransport.transform.position = belt.transform.position;
-            belt.ReserveAndRegisterEvent(itemInTransport);
+            itemInTransport.transform.position = placeable.transform.position;
+            receiver.ReserveAndInstantReceive(itemInTransport);
         }
 
-        public void FeedItemToAssembler(AssemblerController assembler, ItemData item)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void RegisterEvent(BeltTransportEvent beltTransportEvent)
+        public void RegisterEvent(ItemTransportEvent beltTransportEvent)
         {
             _beltTransportEvents.Add(beltTransportEvent);
-            _beltsWithEvents.Add(beltTransportEvent.Source);
+            _itemsWithEvents.Add(beltTransportEvent.Source);
         }
 
-        public void RemoveEventsBySource(IItemReceiver receiver)
+        public void RemoveEventsBySource(IItemTransporter receiver)
         {
-            _beltTransportEvents.RemoveWhere(e => e.Source == receiver as BeltController);
+            _beltTransportEvents.RemoveWhere(e => e.Source == receiver);
             if (receiver is BeltController belt)
             {
-                _beltsWithEvents.Remove(belt);
+                _itemsWithEvents.Remove(belt);
             }
         }
 
-        public void RemoveEventsByTarget(IItemReceiver receiver)
+        public void RemoveEventsByTarget(IItemTransporter receiver)
         {
             _beltTransportEvents.RemoveWhere(e => e.Target == receiver);
             if (receiver is BeltController belt)
             {
-                _beltsWithEvents.Remove(belt);
+                _itemsWithEvents.Remove(belt);
+            }
+        }
+
+        void Update()
+        {
+            foreach (ItemTransportEvent e in _beltTransportEvents.ToList())
+            {
+                if (e.Source == null || !(e.Target as Object))
+                {
+                    _beltTransportEvents.Remove(e);
+                    continue;
+                }
+
+                if ((e.Target is IItemTransporter target && _itemsWithEvents.Contains(target)) || !e.Target.IsFree()) continue;
+
+                e.Source.ExecuteTransport();
+                _beltTransportEvents.Remove(e);
+                _itemsWithEvents.Remove(e.Source);
             }
         }
 
@@ -69,27 +81,17 @@ namespace Buildings
         {
             if (_beltTransportEvents == null) return;
 
-            foreach(var e in _beltTransportEvents)
+            foreach (var e in _beltTransportEvents)
             {
-                if (e.Target == null || e.Source == null || e.Target is not PlaceableItemController other) continue;
-                DrawArrow(e.Source.transform.position, other.transform.position - e.Source.transform.position, .5f);
-            }
-        }
-
-        void Update()
-        {
-            foreach (BeltTransportEvent e in _beltTransportEvents.ToList())
-            {
-                if (e.Source == null || e.Target == null)
+                if (!(e.Target as Object) ||
+                    !(e.Source as Object) ||
+                    (e.Target is not PlaceableItemController target) ||
+                    (e.Source is not PlaceableItemController source))
                 {
-                    _beltTransportEvents.Remove(e);
+                    continue;
                 }
 
-                if (_beltsWithEvents.Contains(e.Target) || !e.Target.IsFree()) continue;
-
-                e.Source.ExecuteTransport();
-                _beltTransportEvents.Remove(e);
-                _beltsWithEvents.Remove(e.Source);
+                DrawArrow(source.transform.position, target.transform.position - source.transform.position, .5f);
             }
         }
 
@@ -97,8 +99,8 @@ namespace Buildings
         {
             Gizmos.DrawRay(pos, direction);
 
-            Vector3 right = Quaternion.LookRotation(direction) * Quaternion.Euler(0, 180 + arrowHeadAngle, 0) * new Vector3(0, 0, 1);
-            Vector3 left = Quaternion.LookRotation(direction) * Quaternion.Euler(0, 180 - arrowHeadAngle, 0) * new Vector3(0, 0, 1);
+            Vector3 right = Quaternion.LookRotation(direction) * Quaternion.Euler(10, 180 + arrowHeadAngle, 0) * new Vector3(0, 0, 1);
+            Vector3 left = Quaternion.LookRotation(direction) * Quaternion.Euler(-10, 180 - arrowHeadAngle, 0) * new Vector3(0, 0, 1);
             Gizmos.DrawRay(pos + direction, right * arrowHeadLength);
             Gizmos.DrawRay(pos + direction, left * arrowHeadLength);
         }

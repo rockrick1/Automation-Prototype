@@ -2,9 +2,9 @@
 
 namespace Buildings.Belts
 {
-    public struct BeltTransportEvent
+    public struct ItemTransportEvent
     {
-        public BeltController Source;
-        public IItemReceiver Target;
+        public IItemTransporter Source;
+        public IItemTransporter Target;
     }
 }

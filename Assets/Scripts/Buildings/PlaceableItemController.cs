@@ -134,6 +134,26 @@ namespace Buildings
             }
         }
 
+        public bool TryGetItemAtOppositeOrientation(out PlaceableItemController output)
+        {
+            output = null;
+            if (_itemData.Size.x != 1 || _itemData.Size.y != 1) return false;
+
+            switch (Orientation)
+            {
+                case ItemOrientation.Right:
+                    return _worldGridController.TryGetItemOn(transform.position + new Vector3(-1, 0), out output);
+                case ItemOrientation.Down:
+                    return _worldGridController.TryGetItemOn(transform.position + new Vector3(0, 1), out output);
+                case ItemOrientation.Left:
+                    return _worldGridController.TryGetItemOn(transform.position + new Vector3(1, 0), out output);
+                case ItemOrientation.Up:
+                    return _worldGridController.TryGetItemOn(transform.position + new Vector3(0, -1), out output);
+                default:
+                    return false;
+            }
+        }
+
         public virtual void OnDestroyed() { }
         public virtual void OnItemPlacedAdjacent(PlaceableItemController other, Vector3 pos) { }
         public virtual void OnItemPlacedAtOrientation(PlaceableItemController other) { }
